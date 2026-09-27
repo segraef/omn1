@@ -1,0 +1,21 @@
+# LibreChat config: one custom endpoint, the Weiche gateway.
+# Schema: https://www.librechat.ai/docs/configuration/librechat_yaml
+version: 1.3.13
+cache: true
+
+interface:
+  customWelcome: "Welcome to Weiche, {{user.name}}. Pick a model from the Gateway menu; switch any time, even mid-chat."
+  modelSelect: true
+
+endpoints:
+  custom:
+    - name: Gateway
+      apiKey: "${LITELLM_MASTER_KEY}"
+      baseURL: http://litellm:4000/v1
+      models:
+        # shown if the gateway can't be reached; otherwise the live list from /v1/models is used
+        default: [claude-opus-5.5, gpt-5.6-sol, gpt-5.6-luna]
+        fetch: true
+      titleConvo: true
+      titleModel: gpt-5.6-luna
+      modelDisplayLabel: Weiche

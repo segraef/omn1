@@ -1,0 +1,137 @@
+# Gateway always runs. UIs are opt-in profiles:
+#   docker compose --profile openwebui --profile librechat up -d
+name: weiche
+
+x-waits-for-gateway: &waits-for-gateway
+  litellm:
+    condition: service_healthy
+
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:v1.102.1
+    command: ["--config", "/app/gateway/config.yaml", "--port", "4000"]
+    env_file: ${ENV_FILE:-.env}
+    volumes:
+      - ./gateway:/app/gateway:ro
+    ports:
+      - "127.0.0.1:4000:4000"
+    healthcheck:
+      # image has python3 but no curl/wget
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4000/health/liveliness')"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------- Open WebUI
+  openwebui:
+    profiles: [openwebui]
+    image: ghcr.io/open-webui/open-webui:v0.11.4-slim
+    depends_on: *waits-for-gateway
+    ports:
+      - "127.0.0.1:3000:8080"
+    environment:
+      WEBUI_NAME: Weiche
+      WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY}
+      # compose is the source of truth; admin-panel config changes reset on restart
+      ENABLE_PERSISTENT_CONFIG: "false"
+      ENABLE_OLLAMA_API: "false"
+      ENABLE_EVALUATION_ARENA_MODELS: "false"
+      OPENAI_API_BASE_URL: http://litellm:4000/v1
+      OPENAI_API_KEY: ${LITELLM_MASTER_KEY}
+      TASK_MODEL_EXTERNAL: gpt-5.6-luna
+      ENABLE_IMAGE_GENERATION: "true"
+      IMAGE_GENERATION_ENGINE: openai
+      IMAGES_OPENAI_API_BASE_URL: http://litellm:4000/v1
+      IMAGES_OPENAI_API_KEY: ${LITELLM_MASTER_KEY}
+      IMAGE_GENERATION_MODEL: gpt-image
+      IMAGE_SIZE: 1024x1024
+      WEBUI_BANNERS: >-
+        [{"id":"welcome","type":"info","title":"Welcome to Weiche","content":"One gateway, many models. Pick a model at the top, or click Compare to ask two at once. Image button in the message bar generates pictures.","dismissible":true,"timestamp":0}]
+    volumes:
+      - openwebui-data:/app/backend/data
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------- LibreChat
+  librechat:
+    profiles: [librechat]
+    image: ghcr.io/danny-avila/librechat:v0.8.7
+    depends_on:
+      <<: *waits-for-gateway
+      mongodb:
+        condition: service_healthy
+      meilisearch:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3080:3080"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3080
+      DOMAIN_CLIENT: http://localhost:3080
+      DOMAIN_SERVER: http://localhost:3080
+      APP_TITLE: Weiche
+      MONGO_URI: mongodb://mongodb:27017/LibreChat
+      SEARCH: "true"
+      MEILI_HOST: http://meilisearch:7700
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+      CREDS_KEY: ${CREDS_KEY}
+      CREDS_IV: ${CREDS_IV}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      ALLOW_REGISTRATION: "true"
+      # only the gateway endpoint, plus agents (needed for the image tool)
+      ENDPOINTS: custom,agents
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
+      IMAGE_GEN_OAI_API_KEY: ${LITELLM_MASTER_KEY}
+      IMAGE_GEN_OAI_BASEURL: http://litellm:4000/v1
+      IMAGE_GEN_OAI_MODEL: gpt-image
+    volumes:
+      - ./librechat/librechat.yaml:/app/librechat.yaml:ro
+      - librechat-images:/app/client/public/images
+      - librechat-uploads:/app/uploads
+      - librechat-logs:/app/logs
+    healthcheck:
+      # image has busybox wget, no curl
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3080/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    restart: unless-stopped
+
+  mongodb:
+    profiles: [librechat]
+    image: mongo:8.0.20
+    command: mongod --noauth
+    volumes:
+      - librechat-mongo:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  meilisearch:
+    profiles: [librechat]
+    image: getmeili/meilisearch:v1.35.1
+    environment:
+      MEILI_NO_ANALYTICS: "true"
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+    volumes:
+      - librechat-meili:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  openwebui-data:
+  librechat-images:
+  librechat-uploads:
+  librechat-logs:
+  librechat-mongo:
+  librechat-meili:

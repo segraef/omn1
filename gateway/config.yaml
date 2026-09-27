@@ -1,0 +1,39 @@
+# Gateway (LiteLLM) config. Every model is served by OpenRouter.
+# The names below are what the chat apps show; the OpenRouter model IDs come from .env (OPENROUTER_*).
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+
+litellm_settings:
+  drop_params: true        # GPT-5.x rejects some OpenAI params (e.g. temperature); drop instead of failing
+  request_timeout: 600
+
+router_settings:
+  num_retries: 1
+
+model_list:
+  - model_name: claude-opus-5.5
+    litellm_params:
+      model: os.environ/OPENROUTER_OPUS
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  - model_name: gpt-5.6-sol
+    litellm_params:
+      model: os.environ/OPENROUTER_SOL
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  - model_name: gpt-5.6-luna
+    litellm_params:
+      model: os.environ/OPENROUTER_LUNA
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  - model_name: gpt-image
+    litellm_params:
+      model: os.environ/OPENROUTER_IMAGE
+      api_key: os.environ/OPENROUTER_API_KEY
+    model_info:
+      mode: image_generation
+
+  - model_name: lyria-3-pro
+    litellm_params:
+      model: os.environ/OPENROUTER_LYRIA
+      api_key: os.environ/OPENROUTER_API_KEY
