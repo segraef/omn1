@@ -24,6 +24,11 @@
   <img src="assets/demo.gif" alt="omn1 demo: Claude, GPT-6, DeepSeek and Qwen in one chat, then a picture, a video and a local model" width="100%" />
 </p>
 
+## What you need
+
+- An [OpenRouter API key](https://openrouter.ai/keys) (paste it in omn1 under Admin Panel > Settings > Connections)
+- Docker, anywhere: locally on your Mac or PC, or in the cloud on a small VM (Azure, AWS, any provider) or Azure Container Apps (with an Azure Postgres database for the chats)
+
 ## Quick start
 
 ```bash
