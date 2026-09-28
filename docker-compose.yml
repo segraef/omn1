@@ -11,7 +11,9 @@ services:
       WEBUI_NAME: omn1
       # login secret: created once by Open WebUI inside its data folder
       WEBUI_SECRET_KEY_FILE: /app/backend/data/.webui_secret_key
-      ENABLE_OLLAMA_API: "false"
+      # Local models: Ollama running on this Mac (install from ollama.com). Harmless if it is not running.
+      ENABLE_OLLAMA_API: "true"
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
       ENABLE_EVALUATION_ARENA_MODELS: "false"
 
       # Everything below only seeds the FIRST start. After that the admin panel owns it
@@ -38,6 +40,8 @@ services:
       AUDIO_TTS_OPENAI_PARAMS: '{"response_format":"mp3"}'
       WEBUI_BANNERS: >-
         [{"id":"welcome","type":"info","title":"Welcome to omn1","content":"Pick a model at the top, or click Compare to ask two at once. The image button in the message bar makes pictures.","dismissible":true,"timestamp":0}]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # lets the container reach Ollama on the host (Linux too)
     volumes:
       - openwebui-data:/app/backend/data
     restart: unless-stopped
