@@ -1,19 +1,26 @@
 """
 title: omn1 Video
-description: Make short videos from a text prompt (Veo 3.1 and two cheaper models) through OpenRouter.
-version: 1.1.0
+description: Make short videos from a text prompt with every OpenRouter video model.
+version: 1.2.0
 """
 
 # WHAT IT DOES
-#   Adds "Veo 3.1 (video)", "Veo 3.1 Lite (video)" and "Wan 3.0 (video)" to the model picker.
-#   Pick one, describe the scene, send. The add-on orders the clip from OpenRouter, checks
+#   Adds every OpenRouter video model that works from a text prompt to the model picker
+#   ("Google Veo 3.1 (video)", "Kling Video v3.0 Pro (video)", "OpenAI Sora 2 Pro (video)", ...). The list comes
+#   from OpenRouter and refreshes hourly, so new models appear by themselves. Models that need an
+#   input video or photo (edit, upscale, avatar) are left out. Pick one, describe the scene, send. The add-on orders the clip from OpenRouter, checks
 #   back every few seconds (a clip takes about 1 to 3 minutes), saves the finished MP4 in
 #   Open WebUI and shows a video player in the chat. Follow-ups in the same chat ("make the
 #   banana blue") are added to the earlier description, so each clip sees the whole story.
 #
-# COST (OpenRouter prices, September 2026, for the default 8-second 720p clip with sound)
-#   Veo 3.1 $3.20   Veo 3.1 Lite $0.40   Wan 3.0 $0.80
+# COST (OpenRouter, September 2026, 8-second 720p clip): from about $0.40 (Veo 3.1 Lite, Wan 3.0)
+#   to $3.20 (Veo 3.1) and $2.40 (Sora 2 Pro). The "done" line shows the real price of each clip.
 #   Every message in these chats is a new paid clip. Prices: https://openrouter.ai/api/v1/videos/models
+#
+# SETTINGS PER MODEL
+#   Each model allows different lengths, resolutions and shapes. The add-on uses your preferred
+#   values when a model offers them, otherwise the closest length, the lowest resolution and the
+#   model's first shape, so no order is refused for an unsupported setting.
 #
 # INSTALL
 #   Admin Panel > Functions > New Function (+), paste this whole file, Save, then switch it on.
@@ -38,6 +45,8 @@ PLAIN_ERRORS = {
     429: "OpenRouter is rate-limiting you. Wait a minute and try again.",
 }
 DOWNLOAD_SECONDS = 300
+CATALOG_SECONDS = 3600  # how long the model list is kept before asking OpenRouter again
+RESOLUTIONS = ["480p", "720p", "768p", "1080p", "2K", "4K"]  # low to high
 MAX_VIDEO_BYTES = 200 * 1024 * 1024
 NO_KEY = (
     "To make videos, add your own OpenRouter key: open Chat Controls (the sliders icon at the top right), "
@@ -76,6 +85,18 @@ async def get_patiently(session, url, wait, **kwargs):
             await asyncio.sleep(wait)
 
 
+def fit(spec, v):
+    """The valve settings, adjusted to what this model offers (None = let the model decide)."""
+    durations = spec.get("supported_durations") or []
+    resolutions = spec.get("supported_resolutions") or []
+    ratios = spec.get("supported_aspect_ratios") or []
+    duration = min(durations, key=lambda d: (abs(d - v.DURATION), d)) if durations else None
+    rank = {r: i for i, r in enumerate(RESOLUTIONS)}
+    resolution = v.RESOLUTION if v.RESOLUTION in resolutions else min(resolutions, key=lambda r: rank.get(r, 99)) if resolutions else None
+    ratio = v.ASPECT_RATIO if v.ASPECT_RATIO in ratios else (ratios[0] if ratios else None)
+    return duration, resolution, ratio
+
+
 def chat_prompt(messages):
     """Every user message in the chat, oldest first, so follow-ups keep the original description."""
     texts = []
@@ -93,12 +114,13 @@ def chat_prompt(messages):
 class Pipe:
     class Valves(BaseModel):
         MODELS: str = Field(
-            "google/veo-3.1=Veo 3.1 (video), google/veo-3.1-lite=Veo 3.1 Lite (video), alibaba/wan-3.0=Wan 3.0 (video)",
-            description="Comma-separated 'openrouter-id=Name in picker'. All video models: https://openrouter.ai/api/v1/videos/models",
+            "",
+            description="Empty = every OpenRouter video model that works from text, updated hourly. "
+            "Or only some: comma-separated 'openrouter-id=Name in picker'.",
         )
-        DURATION: int = Field(8, description="Seconds per clip. Veo 3.1 and Veo 3.1 Lite: 4, 6 or 8. Wan: 2 to 30.")
-        RESOLUTION: str = Field("720p", description="Veo 3.1 and Veo 3.1 Lite: 720p or 1080p (4K on Veo 3.1 only). Wan: 480p, 720p or 1080p.")
-        ASPECT_RATIO: str = Field("16:9", description="16:9 landscape or 9:16 portrait")
+        DURATION: int = Field(8, ge=1, description="Preferred seconds per clip. Models without it use their closest length.")
+        RESOLUTION: str = Field("720p", description="Preferred resolution. Models without it use their lowest one.")
+        ASPECT_RATIO: str = Field("16:9", description="Preferred shape: 16:9 landscape, 9:16 portrait. Models without it use their first one.")
         POLL_SECONDS: int = Field(10, ge=5, description="How often to ask whether the clip is ready (at least 5)")
         TIMEOUT_SECONDS: int = Field(600, ge=60, description="Give up waiting for the clip after this many seconds (at least 60)")
         BASE_URL: str = Field("https://openrouter.ai/api/v1", description="OpenRouter address")
@@ -117,14 +139,32 @@ class Pipe:
 
     def __init__(self):
         self.valves = self.Valves()
+        self._catalog, self._catalog_at = {}, 0.0
 
-    def pipes(self):
-        models = []
-        for item in self.valves.MODELS.split(","):
-            model_id, _, name = item.partition("=")
-            if model_id.strip():
-                models.append({"id": model_id.strip(), "name": (name or model_id).strip()})
-        return models
+    async def catalog(self):
+        """OpenRouter's text-to-video models and what each supports, refreshed hourly."""
+        if not self._catalog or time.monotonic() - self._catalog_at > CATALOG_SECONDS:
+            try:
+                async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as s:
+                    data = json.loads(await call(s, "GET", f"{self.valves.BASE_URL.rstrip('/')}/videos/models"))["data"]
+                # models without lengths need an input video or photo; this add-on only sends text
+                self._catalog = {m["id"]: m for m in data if m.get("supported_durations")}
+                self._catalog_at = time.monotonic()
+            except Exception:
+                pass  # keep the last good list (empty if OpenRouter was never reached)
+        return self._catalog
+
+    async def pipes(self):
+        if self.valves.MODELS.strip():
+            models = []
+            for item in self.valves.MODELS.split(","):
+                model_id, _, name = item.partition("=")
+                if model_id.strip():
+                    models.append({"id": model_id.strip(), "name": (name or model_id).strip()})
+            return models
+        catalog = await self.catalog()
+        names = {mid: m.get("name", mid).replace(": ", " ") for mid, m in catalog.items()}  # "Kling: Video O1" -> "Kling Video O1"
+        return [{"id": mid, "name": f"{names[mid]} (video)"} for mid in sorted(catalog, key=names.get)]
 
     async def api_key(self, base, user):
         """The user's own key first. The admin's keys only ever pay for the admin's own clips."""
@@ -155,7 +195,8 @@ class Pipe:
 
         v = self.valves
         model = body["model"].split(".", 1)[1]
-        name = next((p["name"].split(" (")[0] for p in self.pipes() if p["id"] == model), model)
+        name = next((p["name"].split(" (")[0] for p in await self.pipes() if p["id"] == model), model)
+        duration, resolution, ratio = fit((await self.catalog()).get(model, {}), self.valves)
         prompt = chat_prompt(body["messages"])
         base = v.BASE_URL.rstrip("/")
         started = time.monotonic()
@@ -170,8 +211,10 @@ class Pipe:
             async with aiohttp.ClientSession(headers=headers, timeout=aiohttp.ClientTimeout(total=None, sock_read=60)) as s:  # a hung check is retried
                 try:
                     async with asyncio.timeout(v.TIMEOUT_SECONDS):
-                        await status(f"{name}: sending your request...")
-                        order = {"model": model, "prompt": prompt, "duration": v.DURATION, "resolution": v.RESOLUTION, "aspect_ratio": v.ASPECT_RATIO}
+                        shown = ", ".join(str(x) for x in (duration and f"{duration} s", resolution, ratio) if x)
+                        await status(f"{name}: sending your request{f' ({shown})' if shown else ''}...")
+                        order = {"model": model, "prompt": prompt, "duration": duration, "resolution": resolution, "aspect_ratio": ratio}
+                        order = {k: val for k, val in order.items() if val is not None}
                         job = json.loads(await call(s, "POST", f"{base}/videos", json=order))
                         job_id = job["id"]
                         while job.get("status") not in ("completed", "failed", "cancelled", "expired"):

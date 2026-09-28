@@ -4,7 +4,7 @@ Two optional add-ons that give omn1 video and music, plus a setting for read-alo
 
 | Add-on | What you get |
 | --- | --- |
-| [`video.py`](video.py) | Veo 3.1, Veo 3.1 Lite and Wan 3.0 in the model picker. Describe a scene, get a video player in the chat after 1 to 3 minutes. |
+| [`video.py`](video.py) | Every OpenRouter video model in the model picker (25 today: Veo 3.1, Sora 2 Pro, Kling, Seedance, Wan, Grok Imagine and more; new ones appear by themselves). Describe a scene, get a video player in the chat after 1 to 3 minutes. |
 | [`music.py`](music.py) | Lyria 3 Pro (full songs) and Lyria 3 Clip (30 seconds) in the model picker. Describe a song, get an audio player and the lyrics. |
 
 ## Install
@@ -35,9 +35,7 @@ Prices from OpenRouter on 2026-09-28.
 
 | What | Price |
 | --- | --- |
-| Veo 3.1, 8 s clip with sound | $3.20 |
-| Veo 3.1 Lite, 8 s clip | $0.40 |
-| Wan 3.0, 8 s clip | $0.80 |
+| Video, 8 s clip at 720p | from about $0.40 (Veo 3.1 Lite, Wan 3.0) to $3.20 (Veo 3.1); the "done" line shows the exact price |
 | Lyria 3 Pro, one song | $0.08 |
 | Lyria 3 Clip, one 30 s clip | $0.04 |
 | Read-aloud | about 1.5 cents per 1,000 characters |
