@@ -20,6 +20,10 @@
   <img src="assets/diagram.svg" alt="What is omn1: one app per AI (chaos) versus every model in one chat (order)" width="100%" />
 </p>
 
+<p align="center">
+  <img src="assets/demo.gif" alt="omn1 demo: pick Claude, switch to GPT mid-chat, browse the video models" width="100%" />
+</p>
+
 ## Quick start
 
 ```bash
