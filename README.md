@@ -38,4 +38,6 @@ Install [Ollama](https://ollama.com/download), then pull a model:
 ollama pull huihui_ai/qwen3-abliterated:8b
 ```
 
+Reload omn1 and the model shows up in the model picker next to the OpenRouter models.
+
 MIT licensed. See [`LICENSE`](LICENSE).
