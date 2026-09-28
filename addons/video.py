@@ -111,6 +111,14 @@ def chat_prompt(messages):
     return "\n".join(texts)
 
 
+def picker_name(name):
+    """'Google: Veo 3.1' -> 'Google Veo 3.1', but 'Qwen: Qwen Image 3' -> 'Qwen Image 3'."""
+    maker, _, model = name.partition(": ")
+    if not model:
+        return name
+    return model if model.lower().startswith(maker.lower()) else f"{maker} {model}"
+
+
 class Pipe:
     class Valves(BaseModel):
         MODELS: str = Field(
@@ -163,7 +171,7 @@ class Pipe:
                     models.append({"id": model_id.strip(), "name": (name or model_id).strip()})
             return models
         catalog = await self.catalog()
-        names = {mid: m.get("name", mid).replace(": ", " ") for mid, m in catalog.items()}  # "Kling: Video O1" -> "Kling Video O1"
+        names = {mid: picker_name(m.get("name", mid)) for mid, m in catalog.items()}
         return [{"id": mid, "name": f"{names[mid]} (video)"} for mid in sorted(catalog, key=names.get)]
 
     async def api_key(self, base, user):
