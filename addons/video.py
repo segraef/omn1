@@ -1,5 +1,5 @@
 """
-title: Banana Video
+title: omn1 Video
 description: Make short videos from a text prompt (Veo 3.1 and two cheaper models) through OpenRouter.
 version: 1.1.0
 """
@@ -19,7 +19,7 @@ version: 1.1.0
 #   Admin Panel > Functions > New Function (+), paste this whole file, Save, then switch it on.
 #   Admins: it uses the OpenRouter key already saved under Admin Panel > Settings > Connections.
 #   Everyone else pays with their own key: Chat Controls (sliders icon, top right of a chat)
-#   > Valves > Functions > Banana Video > API Key. The gear icon next to the function holds the settings below.
+#   > Valves > Functions > omn1 Video > API Key. The gear icon next to the function holds the settings below.
 
 import asyncio
 import json
@@ -41,7 +41,7 @@ DOWNLOAD_SECONDS = 300
 MAX_VIDEO_BYTES = 200 * 1024 * 1024
 NO_KEY = (
     "To make videos, add your own OpenRouter key: open Chat Controls (the sliders icon at the top right), "
-    "then Valves > Functions > Banana Video, and paste it into API Key. Get a key at https://openrouter.ai/keys."
+    "then Valves > Functions > omn1 Video, and paste it into API Key. Get a key at https://openrouter.ai/keys."
 )
 
 

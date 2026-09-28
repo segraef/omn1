@@ -1,6 +1,6 @@
 # Add-ons
 
-Two optional add-ons that give banana video and music, plus a setting for read-aloud. They all pay through OpenRouter.
+Two optional add-ons that give omn1 video and music, plus a setting for read-aloud. They all pay through OpenRouter.
 
 | Add-on | What you get |
 | --- | --- |
@@ -13,7 +13,7 @@ Two optional add-ons that give banana video and music, plus a setting for read-a
 2. Paste the whole file, **Save**, then switch it on.
 3. The new models show up in the picker. Admins pay with the key already saved under Connections.
 
-Other people pay with their own OpenRouter key. You make the models visible to them (Admin Panel > Settings > Models, open the model, set it to Public). They paste their key under Chat Controls (the sliders icon at the top right of a chat) > Valves > Functions > Banana Video or Banana Music > API Key. Without a key they get a short note telling them where to put one, and nothing is charged.
+Other people pay with their own OpenRouter key. You make the models visible to them (Admin Panel > Settings > Models, open the model, set it to Public). They paste their key under Chat Controls (the sliders icon at the top right of a chat) > Valves > Functions > omn1 Video or omn1 Music > API Key. Without a key they get a short note telling them where to put one, and nothing is charged.
 
 ## Read-aloud
 

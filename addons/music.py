@@ -1,5 +1,5 @@
 """
-title: Banana Music
+title: omn1 Music
 description: Make songs from a text prompt with Google's Lyria 3 through OpenRouter.
 version: 1.1.0
 """
@@ -18,7 +18,7 @@ version: 1.1.0
 #   Admin Panel > Functions > New Function (+), paste this whole file, Save, then switch it on.
 #   Admins: it uses the OpenRouter key already saved under Admin Panel > Settings > Connections.
 #   Everyone else pays with their own key: Chat Controls (sliders icon, top right of a chat)
-#   > Valves > Functions > Banana Music > API Key. The gear icon next to the function holds the settings below.
+#   > Valves > Functions > omn1 Music > API Key. The gear icon next to the function holds the settings below.
 
 import asyncio
 import base64
@@ -39,7 +39,7 @@ PLAIN_ERRORS = {
 }
 NO_KEY = (
     "To make songs, add your own OpenRouter key: open Chat Controls (the sliders icon at the top right), "
-    "then Valves > Functions > Banana Music, and paste it into API Key. Get a key at https://openrouter.ai/keys."
+    "then Valves > Functions > omn1 Music, and paste it into API Key. Get a key at https://openrouter.ai/keys."
 )
 
 

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.svg" alt="banana" width="280" />
+  <img src="assets/logo.svg" alt="omn1" width="240" />
 </p>
 
 <p align="center">
@@ -14,10 +14,10 @@
   <a href="https://github.com/segraef/sec-kit"><img src="https://raw.githubusercontent.com/segraef/sec-kit/main/docs/media/badge.svg" alt="Scanned with SecKit" /></a>
 </p>
 
-**banana** is your own AI hub: every model on OpenRouter at the best rate, switch any time, one web UI for text and images; video, music and read-aloud via [add-ons](addons/), and the same key in VS Code as **banana Code**.
+**omn1** is your own AI hub: every model on OpenRouter at the best rate, switch any time, and one web UI for text, images, video, music and read-aloud ([add-ons](addons/)). The same key works in VS Code as **omn1 Code**. Built on [Open WebUI](https://github.com/open-webui/open-webui).
 
 <p align="center">
-  <img src="assets/diagram.svg" alt="What is banana: one app per AI (chaos) versus every model in one chat (order)" width="100%" />
+  <img src="assets/diagram.svg" alt="What is omn1: one app per AI (chaos) versus every model in one chat (order)" width="100%" />
 </p>
 
 ## Quick start

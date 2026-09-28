@@ -1,6 +1,6 @@
 # Open WebUI talking straight to OpenRouter.
 #   docker compose up -d   ->   http://localhost:3000
-name: banana
+name: omn1
 
 services:
   openwebui:
@@ -8,7 +8,7 @@ services:
     ports:
       - "127.0.0.1:3000:8080"
     environment:
-      WEBUI_NAME: Banana
+      WEBUI_NAME: omn1
       # login secret: created once by Open WebUI inside its data folder
       WEBUI_SECRET_KEY_FILE: /app/backend/data/.webui_secret_key
       ENABLE_OLLAMA_API: "false"
@@ -38,7 +38,7 @@ services:
       # without mp3, OpenRouter sends raw sound that browsers cannot play
       AUDIO_TTS_OPENAI_PARAMS: '{"response_format":"mp3"}'
       WEBUI_BANNERS: >-
-        [{"id":"welcome","type":"info","title":"Welcome to Banana","content":"Pick a model at the top, or click Compare to ask two at once. The image button in the message bar makes pictures.","dismissible":true,"timestamp":0}]
+        [{"id":"welcome","type":"info","title":"Welcome to omn1","content":"Pick a model at the top, or click Compare to ask two at once. The image button in the message bar makes pictures.","dismissible":true,"timestamp":0}]
     volumes:
       - openwebui-data:/app/backend/data
     restart: unless-stopped
