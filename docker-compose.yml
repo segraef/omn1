@@ -18,9 +18,8 @@ services:
       # (Admin Panel > Settings > Connections / Models / Images), and changes here are ignored.
       # Your OpenRouter key is entered in the app, never here.
       OPENAI_API_BASE_URL: https://openrouter.ai/api/v1
-      # Models shown in the picker. Empty list = all ~450 OpenRouter models.
-      OPENAI_API_CONFIGS: >-
-        {"0": {"enable": true, "model_ids": ["anthropic/claude-opus-5.5", "openai/gpt-5.6-sol", "openai/gpt-5.6-luna"]}}
+      # No model list on purpose: every OpenRouter model shows up, new ones included.
+      # Hide or rename models under Admin Panel > Settings > Models.
       DEFAULT_MODELS: anthropic/claude-opus-5.5
       TASK_MODEL_EXTERNAL: openai/gpt-5.6-luna
       ENABLE_IMAGE_GENERATION: "true"
