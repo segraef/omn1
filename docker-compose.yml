@@ -1,0 +1,50 @@
+# Open WebUI talking straight to OpenRouter.
+#   docker compose up -d   ->   http://localhost:3000
+name: omn1
+
+services:
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:v0.11.4-slim
+    ports:
+      - "127.0.0.1:3000:8080"
+    environment:
+      WEBUI_NAME: omn1
+      # login secret: created once by Open WebUI inside its data folder
+      WEBUI_SECRET_KEY_FILE: /app/backend/data/.webui_secret_key
+      # Local models: Ollama running on this Mac (install from ollama.com). Harmless if it is not running.
+      ENABLE_OLLAMA_API: "true"
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      ENABLE_EVALUATION_ARENA_MODELS: "false"
+
+      # Everything below only seeds the FIRST start. After that the admin panel owns it
+      # (Admin Panel > Settings > Connections / Models / Images), and changes here are ignored.
+      # Your OpenRouter key is entered in the app, never here.
+      OPENAI_API_BASE_URL: https://openrouter.ai/api/v1
+      # No model list on purpose: every OpenRouter model shows up, new ones included.
+      # Hide or rename models under Admin Panel > Settings > Models.
+      DEFAULT_MODELS: anthropic/claude-opus-5.5
+      TASK_MODEL_EXTERNAL: openai/gpt-5.6-luna
+      ENABLE_IMAGE_GENERATION: "true"
+      IMAGE_GENERATION_ENGINE: openai
+      IMAGES_OPENAI_API_BASE_URL: https://openrouter.ai/api/v1
+      IMAGE_GENERATION_MODEL: openai/gpt-image-1
+      IMAGE_SIZE: 1024x1024
+      # gpt-image models reject "response_format"; the default pattern misses the "openai/" prefix
+      IMAGE_URL_RESPONSE_MODELS_REGEX_PATTERN: ^(openai/)?gpt-image
+      # Read-aloud (speaker icon under a reply). Paste the key under Admin Panel > Settings > Audio.
+      # Grok Voice detects the language (German, English, 20+ more); about $0.015 per 1,000 characters.
+      # No engine set on purpose: the free browser voice stays until you pick "OpenAI" there.
+      # Picking it resets Model/Voice to tts-1/alloy: change them to x-ai/grok-voice-tts-1.0 / eve.
+      AUDIO_TTS_OPENAI_API_BASE_URL: https://openrouter.ai/api/v1
+      # without mp3, OpenRouter sends raw sound that browsers cannot play
+      AUDIO_TTS_OPENAI_PARAMS: '{"response_format":"mp3"}'
+      WEBUI_BANNERS: >-
+        [{"id":"welcome","type":"info","title":"Welcome to omn1","content":"Pick a model at the top, or click Compare to ask two at once. The image button in the message bar makes pictures.","dismissible":true,"timestamp":0}]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # lets the container reach Ollama on the host (Linux too)
+    volumes:
+      - openwebui-data:/app/backend/data
+    restart: unless-stopped
+
+volumes:
+  openwebui-data:

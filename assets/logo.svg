@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="68" viewBox="0 0 240 68" role="img" aria-label="omn1">
+  <!-- omn1: a ring of four coloured arcs (many models) around a bold "1" (one chat) -->
+  <g fill="none" stroke-width="7" stroke-linecap="round">
+    <path d="M34 8A26 26 0 0 1 60 34" stroke="#2563eb"/>
+    <path d="M60 34A26 26 0 0 1 34 60" stroke="#7c3aed"/>
+    <path d="M34 60A26 26 0 0 1 8 34" stroke="#db2777"/>
+    <path d="M8 34A26 26 0 0 1 34 8" stroke="#0891b2"/>
+  </g>
+  <path d="M28 25L36 20H39V48H33V28.5L28 31Z" fill="#6366f1"/>
+  <text x="76" y="47" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="40" font-weight="800" letter-spacing="-1.5" fill="#6366f1">omn<tspan fill="#a855f7">1</tspan></text>
+</svg>
