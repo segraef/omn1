@@ -1,10 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="280" height="68" viewBox="0 0 280 68" role="img" aria-label="weiche">
-  <!-- a railway switch: one track in, two tracks out -->
-  <g fill="none" stroke-width="7" stroke-linecap="round">
-    <path d="M6 44H26" stroke="#64748b"/>
-    <path d="M26 44H60" stroke="#2563eb"/>
-    <path d="M26 44C38 44 44 18 60 18" stroke="#7c3aed"/>
-  </g>
-  <circle cx="26" cy="44" r="6" fill="#ffffff" stroke="#64748b" stroke-width="3"/>
-  <text x="74" y="46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="38" font-weight="700" letter-spacing="-1.5" fill="#3b82f6">weiche</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="68" viewBox="0 0 280 68" role="img" aria-label="banana">
+  <!-- banana: crescent body, darker inner curve, stem, tip -->
+  <path d="M8 30C12 52 40 62 62 46C66 43 66 38 62 38C46 50 22 46 14 30C12 26 7 26 8 30Z" fill="#facc15" stroke="#ca8a04" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M16 36C26 48 44 50 58 43" fill="none" stroke="#eab308" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M61 39L66 30" stroke="#854d0e" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="9.5" cy="30" r="2.2" fill="#713f12"/>
+  <text x="76" y="46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="38" font-weight="700" letter-spacing="-1.5" fill="#ca8a04">banana</text>
 </svg>
