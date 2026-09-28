@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/demo.gif" alt="omn1 demo: pick Claude, switch to GPT mid-chat, browse the video models" width="100%" />
+  <img src="assets/demo.gif" alt="omn1 demo: Claude, GPT-6, DeepSeek and Qwen in one chat, then a picture, a video and a local model" width="100%" />
 </p>
 
 ## Quick start

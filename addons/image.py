@@ -39,7 +39,6 @@ from open_webui.routers.images import upload_image
 PLAIN_ERRORS = {
     401: "OpenRouter did not accept the key. Check it under Admin Panel > Settings > Connections, or in your own add-on settings.",
     402: "Your OpenRouter credit is used up. Top it up at https://openrouter.ai/settings/credits.",
-    403: "OpenRouter's safety filter blocked this prompt. Try wording it differently.",
     429: "OpenRouter is rate-limiting you. Wait a minute and try again.",
 }
 CATALOG_SECONDS = 3600  # how long the model list is kept before asking OpenRouter again
@@ -67,17 +66,22 @@ async def call(session, method, url, **kwargs):
         raise Exception(PLAIN_ERRORS.get(r.status) or f"OpenRouter refused the request ({r.status}): {str(detail)[:300]}")
 
 
+OUR_REPLIES = ("Here is your picture.", "Here is your clip.", "Here is your song.", "To make another")
+
+
 def chat_prompt(messages):
-    """Every user message in the chat, oldest first, so follow-ups keep the original description."""
+    """The user's messages since the chat last talked to a normal text model, oldest first.
+    Follow-ups ("make it blue") keep the earlier description; earlier text chat is left out."""
     texts = []
-    for m in messages:
-        if m.get("role") != "user":
-            continue
+    for m in reversed(messages):
         content = m.get("content") or ""
         if isinstance(content, list):  # message with attachments: keep the text parts
             content = " ".join(p.get("text", "") for p in content if p.get("type") == "text")
-        if content.strip():
-            texts.append(content.strip())
+        content = content.strip()
+        if m.get("role") == "assistant" and content and not content.startswith(OUR_REPLIES):
+            break  # a text model answered here: what came before is a different conversation
+        if m.get("role") == "user" and content:
+            texts.insert(0, content)
     return "\n".join(texts)
 
 
