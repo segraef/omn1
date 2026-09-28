@@ -32,6 +32,12 @@ docker compose up -d
 
 Open http://localhost:3000, create your account (the first one is the admin), then paste your [OpenRouter key](https://openrouter.ai/keys) under Admin Panel > Settings > **Connections** and **Images**.
 
+Provider logos in the model picker (rerun when new models appear):
+
+```bash
+docker compose exec -T openwebui python3 - < scripts/icons.py
+```
+
 ## Local models (optional)
 
 Run models on your own machine, free and private, with [Ollama](https://ollama.com/download). Install and start it, then pull a model, for example an abliterated (uncensored) Qwen 3, about 5 GB:
