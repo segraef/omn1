@@ -14,7 +14,7 @@
   <a href="https://github.com/segraef/sec-kit"><img src="https://raw.githubusercontent.com/segraef/sec-kit/main/docs/media/badge.svg" alt="Scanned with SecKit" /></a>
 </p>
 
-**omn1** is your own AI hub: every model on OpenRouter at the best rate, switch any time, and one web UI for text, images, video, music and read-aloud (images, video and music from every model via [add-ons](addons/)). The same key works in VS Code as **omn1 Code**. Built on [Open WebUI](https://github.com/open-webui/open-webui).
+**omn1** is one chat for all AI models. Pick any model, switch any time, and create text, images, video and music, in the cloud through OpenRouter or locally with Ollama. Built on [Open WebUI](https://github.com/open-webui/open-webui).
 
 <p align="center">
   <img src="assets/diagram.svg" alt="What is omn1: one app per AI (chaos) versus every model in one chat (order)" width="100%" />
