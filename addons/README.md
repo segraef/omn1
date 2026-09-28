@@ -1,10 +1,11 @@
 # Add-ons
 
-Three optional add-ons that give omn1 pictures, video and music from every OpenRouter model, plus a setting for read-aloud. They all pay through OpenRouter.
+Optional add-ons: pictures, video and music from every OpenRouter model, a web search switch, plus a setting for read-aloud. They all pay through OpenRouter.
 
 | Add-on | What you get |
 | --- | --- |
 | [`image.py`](image.py) | Every OpenRouter image model in the model picker (55 today: Meta Muse Image, GPT Image, Qwen Image, Seedream, FLUX, Recraft and more). Describe a picture, get it in the chat. |
+| [`websearch.py`](websearch.py) | A globe switch in the chat input. Switch it on and OpenRouter searches the web for that message; the answer cites its sources. Install it, switch it on, then set it to Global in its "..." menu. |
 | [`video.py`](video.py) | Every OpenRouter video model in the model picker (25 today: Veo 3.1, Sora 2 Pro, Kling, Seedance, Wan, Grok Imagine and more; new ones appear by themselves). Describe a scene, get a video player in the chat after 1 to 3 minutes. |
 | [`music.py`](music.py) | Lyria 3 Pro (full songs) and Lyria 3 Clip (30 seconds) in the model picker. Describe a song, get an audio player and the lyrics. |
 
@@ -37,6 +38,7 @@ Prices from OpenRouter on 2026-09-28.
 | What | Price |
 | --- | --- |
 | Picture | roughly $0.01 to $0.20 depending on the model; the "done" line shows the exact price |
+| Web search | about $0.02 per message with 5 results, only when the switch is on |
 | Video, 8 s clip at 720p | from about $0.40 (Veo 3.1 Lite, Wan 3.0) to $3.20 (Veo 3.1); the "done" line shows the exact price |
 | Lyria 3 Pro, one song | $0.08 |
 | Lyria 3 Clip, one 30 s clip | $0.04 |

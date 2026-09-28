@@ -15,6 +15,8 @@ services:
       ENABLE_OLLAMA_API: "true"
       OLLAMA_BASE_URL: http://host.docker.internal:11434
       ENABLE_EVALUATION_ARENA_MODELS: "false"
+      # knowledge-base and memory tools need a document search engine the slim image lacks: off
+      DEFAULT_MODEL_METADATA: '{"builtinTools": {"knowledge": false, "memory": false}}'
 
       # Everything below only seeds the FIRST start. After that the admin panel owns it
       # (Admin Panel > Settings > Connections / Models / Images), and changes here are ignored.
