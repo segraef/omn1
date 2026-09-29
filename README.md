@@ -26,7 +26,7 @@
 
 ## What you need
 
-- An [OpenRouter API key](https://openrouter.ai/keys) (paste it in omn1 under Admin Panel > Settings > Connections)
+- An API key from the gateway you prefer: [OpenRouter](https://openrouter.ai/keys), [Requesty](https://requesty.ai), [Hugging Face](https://huggingface.co/settings/tokens) or any other OpenAI-compatible one (add it in omn1 under Admin Panel > Settings > Connections; OpenRouter is set up by default)
 - Docker, anywhere: locally on your Mac or PC, or in the cloud on a small VM (Azure, AWS, any provider) or Azure Container Apps (with an Azure Postgres database for the chats)
 
 ## Quick start
