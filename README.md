@@ -17,7 +17,7 @@
 **omn1** is one chat for all AI models. Pick any model, switch any time, and create text, images, video and music, in the cloud through OpenRouter or locally with Ollama. Built on [Open WebUI](https://github.com/open-webui/open-webui).
 
 <p align="center">
-  <img src="assets/diagram.svg" alt="What is omn1: one app per AI (chaos) versus every model in one chat (order)" width="100%" />
+  <img src="assets/diagram.svg" alt="What is omn1: one app per AI (chaos) versus every model in one chat through OpenRouter, Requesty, Hugging Face or local models (order)" width="100%" />
 </p>
 
 <p align="center">
@@ -44,5 +44,15 @@ ollama pull huihui_ai/qwen3-abliterated:8b
 ```
 
 Reload omn1 and the model shows up in the model picker next to the OpenRouter models.
+
+## FAQ
+
+**What does omn1 add over OpenRouter's own chat?**
+
+For casual chatting, OpenRouter's chat is plenty. omn1 makes the difference when you want:
+
+1. **Self-hosted:** runs on your machine or in your own cloud, and your chats stay in your own database.
+2. **Gateway independence:** not only OpenRouter. Any OpenAI-compatible gateway (Requesty, AIML API, Hugging Face, ...) plugs in as another connection.
+3. **Local models:** Ollama models, including abliterated ones, right next to the cloud models.
 
 MIT licensed. See [`LICENSE`](LICENSE).
